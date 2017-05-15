@@ -1,10 +1,12 @@
-YADC_CLONE
+YADC_CLONE for ARM architecture (Raspberry Pi et al.)
 ===
 
-Cloned from [CouchDB's official Docker image](https://hub.docker.com/_/couchdb/) ([src](https://github.com/apache/couchdb-docker)), w/ solely minimal changes to `Dockerfile` (e.g. using [resin/rpi-raspbian:jessie](https://hub.docker.com/r/resin/rpi-raspbian/), ...)
+Cloned from [CouchDB's official Docker image](https://hub.docker.com/_/couchdb/) ([src](https://github.com/apache/couchdb-docker)), minimal changes applied to `Dockerfile` (e.g. using [resin/rpi-raspbian:jessie](https://hub.docker.com/r/resin/rpi-raspbian/), ...)
 
 Yet Another Dockerized CouchDB – **but for ARM architecture**.
 Put the couch in a docker container and ship it anywhere **w/ your ARM architecture device, e.g. Raspberry Pi**.
+
+Build and tested on *Raspberry Pi 3 Model B* (`ARMv8`).
 
 ---
 
