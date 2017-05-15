@@ -115,4 +115,4 @@ I don't get notified about comments on Docker Hub, so I might respond really lat
 
 ## Credits, Attribution, THANK YOU and ❤
 
-- [All the fine people contributing to the official image](https://github.com/openwebcraft/rpi-couchdb-docker/graphs/contributors)
+- [All the fine people contributing to the official image](https://github.com/apache/couchdb-docker/graphs/contributors)
