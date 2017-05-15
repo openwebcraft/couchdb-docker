@@ -10,9 +10,10 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-FROM debian:jessie
+FROM resin/rpi-raspbian:jessie
 
-MAINTAINER Clemens Stolle klaemo@apache.org
+MAINTAINER Matthias Geisler matthias@openwebcraft.com
+# Upstream MAINTAINER Clemens Stolle klaemo@apache.org
 
 # Install instructions from https://cwiki.apache.org/confluence/display/COUCHDB/Debian
 
