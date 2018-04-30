@@ -10,10 +10,10 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-FROM matthiasg/rpi-couchdb:1.6.1
+FROM matthiasg/rpi-couchdb:1.7.1
 
 MAINTAINER Matthias Geisler matthias@openwebcraft.com
-# Upstream MAINTAINER Clemens Stolle klaemo@apache.org
+# Upstream MAINTAINER CouchDB Developers dev@couchdb.apache.org
 
 ENV COUCHPERUSER_SHA 5d28db3272eea9619d4391b33aae6030f0319ecc54aa2a2f2b6c6a8d448f03f2
 RUN apt-get update && apt-get install -y rebar make \
