@@ -1,7 +1,7 @@
 YADC_CLONE for ARM architecture (Raspberry Pi et al.)
 ===
 
-Cloned from [CouchDB's official Docker image](https://hub.docker.com/_/couchdb/) ([src](https://github.com/apache/couchdb-docker)), minimal changes applied to `Dockerfile` (e.g. using [resin/rpi-raspbian:jessie](https://hub.docker.com/r/resin/rpi-raspbian/), ...)
+Cloned from [CouchDB's official Docker image](https://hub.docker.com/_/couchdb/) ([src (`upstream`)](https://github.com/apache/couchdb-docker)), minimal changes applied to `Dockerfile` (e.g. using [resin/rpi-raspbian:jessie](https://hub.docker.com/r/resin/rpi-raspbian/), ...)
 
 Yet Another Dockerized CouchDB – **but for ARM architecture**.
 Put the couch in a docker container and ship it anywhere **w/ your ARM architecture device, e.g. Raspberry Pi**.
@@ -10,8 +10,6 @@ Build and tested on *Raspberry Pi 3 Model B* (`ARMv8`).
 
 ---
 
-- Version (stable): `CouchDB 1.6.1`, `Erlang 17.3`
-- Version (stable): `CouchDB 2.0.0`, `Erlang 17.3`
 - Version (stable): `CouchDB 1.7.1`, `Erlang 17.3`
 - Version (stable): `CouchDB 2.1.1`, `Erlang 17.3`
 
@@ -20,9 +18,6 @@ Build and tested on *Raspberry Pi 3 Model B* (`ARMv8`).
 - `1.7.1`: CouchDB 1.7.1
 - `1.7.1-couchperuser`: CouchDB 1.7.1 with couchperuser plugin
 - `latest`, `2.1.1`: CouchDB 2.1.1 single node (capable of running in a cluster)
-- `1.6.1`: CouchDB 1.6.1
-- `1.6.1-couchperuser`: CouchDB 1.6.1 with couchperuser plugin
-- `latest`, `2.0.0`: CouchDB 2.0 single node
 
 ## Features
 
@@ -33,7 +28,7 @@ Build and tested on *Raspberry Pi 3 Model B* (`ARMv8`).
 
 ## Run (latest/2.1.1)
 
-Available on the docker registry as [matthiasg/rpi-couchdb:latest](https://index.docker.io/u/matthiasg/rpi-couchdb/).
+Available on the docker registry as [matthiasg/rpi-couchdb:latest](https://hub.docker.com/r/matthiasg/rpi-couchdb/).
 This is a build of the CouchDB 2.0 release. A data volume
 is exposed on `/opt/couchdb/data`, and the node's port is exposed on `5984`.
 
@@ -44,13 +39,8 @@ CouchDB uses `/opt/couchdb/data` to store its data, and is exposed as a volume.
 Here is an example launch line for a single-node CouchDB with an admin username and password of `admin` and `password`, exposed to the world on port `5984`:
 
 ```bash
-$ docker run -p 5984:5984 --volume ~/data:/opt/couchdb/data --volume ~/etc/local.d:/opt/couchdb/etc/local.d --env COUCHDB_USER=admin --env COUCHDB_PASSWORD=password apache/couchdb:2.1.1
 # expose it to the world on port 5984 and use your current directory as the CouchDB Database directory
-[sudo] docker run -p 5984:5984 -v $(pwd):/opt/couchdb/data matthiasg/rpi-couchdb
-18:54:48.780 [info] Application lager started on node nonode@nohost
-18:54:48.780 [info] Application couch_log_lager started on node nonode@nohost
-18:54:48.780 [info] Application couch_mrview started on node nonode@nohost
-18:54:48.780 [info] Application couch_plugins started on node nonode@nohost
+$ docker run -p 5984:5984 --volume $(pwd):/opt/couchdb/data --volume ~/etc/local.d:/opt/couchdb/etc/local.d --env COUCHDB_USER=admin --env COUCHDB_PASSWORD=password matthiasg/rpi-couchdb:2.1.1
 ```
 
 ### Detailed configuration (latest/2.x)
@@ -58,7 +48,7 @@ $ docker run -p 5984:5984 --volume ~/data:/opt/couchdb/data --volume ~/etc/local
 CouchDB uses `/opt/couchdb/etc/local.d` to store its configuration. It is highly recommended to bind map this to an external directory, to persist the configuration across restarts.
 
 CouchDB also uses `/opt/couchdb/etc/vm.args` to store Erlang runtime-specific changes. Changing these values is less common. If you need to change the epmd port, for instance, you will want to bind mount this file as well. (Note: files cannot be bind-mounted on Windows hosts.)
-Available on the docker registry as [matthiasg/rpi-couchdb:1.6.1](https://index.docker.io/u/matthiasg/rpi-couchdb/).
+Available on the docker registry as [matthiasg/rpi-couchdb:1.7.1](https://hub.docker.com/r/matthiasg/rpi-couchdb/).
 
 In addition, a few environment variables are provided to set very common parameters:
 
@@ -80,15 +70,13 @@ Note also that port 5986 is not exposed, as this can present *significant* secur
 
 ## Run (1.7.1)
 
-Available as an official image on Docker Hub as [apache/couchdb:1.7.1](https://hub.docker.com/r/apache/couchdb/)
+Available as an image on Docker Hub as [matthiasg/rpi-couchdb:1.7.1](https://hub.docker.com/r/matthiasg/rpi-couchdb/)
 
 ```bash
-[sudo] docker pull matthiasg/rpi-couchdb:1.6.1
-[sudo] docker pull apache/couchdb:1.7.1
+[sudo] docker pull matthiasg/rpi-couchdb:1.7.1
 
 # expose it to the world on port 5984
-[sudo] docker run -d -p 5984:5984 --name couchdb matthiasg/rpi-couchdb:1.6.1
-[sudo] docker run -d -p 5984:5984 --name couchdb apache/couchdb:1.7.1
+[sudo] docker run -d -p 5984:5984 --name couchdb matthiasg/rpi-couchdb:1.7.1
 
 curl http://localhost:5984
 ```
@@ -97,8 +85,7 @@ curl http://localhost:5984
 
 ```bash
 # expose it to the world on port 5984 and use your current directory as the CouchDB Database directory
-[sudo] docker run -d -p 5984:5984 -v $(pwd):/usr/local/var/lib/couchdb --name couchdb matthiasg/rpi-couchdb:1.6.1
-[sudo] docker run -d -p 5984:5984 -v $(pwd):/usr/local/var/lib/couchdb --name couchdb apache/couchdb:1.7.1
+[sudo] docker run -d -p 5984:5984 -v $(pwd):/usr/local/var/lib/couchdb --name couchdb matthiasg/rpi-couchdb:1.7.1
 ```
 
 If you want to provide your own config, you can either mount a directory at `/usr/local/etc/couchdb`
@@ -115,68 +102,7 @@ This build includes the `couchperuser` plugin.
 `couchperuser` is a CouchDB plugin daemon that creates per-user databases [github.com/etrepum/couchperuser](https://github.com/etrepum/couchperuser).
 
 ```
-[sudo] docker run -d -p 5984:5984 --name couchdb matthiasg/rpi-couchdb:1.6.1-couchperuser
-[sudo] docker run -d -p 5984:5984 --name couchdb apache/couchdb:1.7.1-couchperuser
-```
-
-## Development images
-
-This repository provides definitions to run the very latest (`master` branch)
-CouchDB code:
-
-* `dev` runs a single node off of the `master` branch, similar to the other
-  officially released images.
-* `dev-cluster` demonstrates the CouchDB clustering features by creating a
-  local cluster of a default three nodes inside the container, with a proxy in
-  front.  This is great for testing clustering in your local environment.
-
-You will need to build Docker images from the `dev` directory in this
-repository; [Apache Software Foundation policy][4] prevents us from publishing
-non-release builds for wide distribution.
-
-When launching the `dev-cluster` container, here is what you will see:
-
-```bash
-# expose the cluster to the world
-$ docker run -it -p 5984:5984 <image-hash>
-
-[ * ] Setup environment ... ok
-[ * ] Ensure CouchDB is built ... ok
-[ * ] Prepare configuration files ... ok
-[ * ] Start node node1 ... ok
-[ * ] Start node node2 ... ok
-[ * ] Start node node3 ... ok
-[ * ] Check node at http://127.0.0.1:15984/ ... ok
-[ * ] Check node at http://127.0.0.1:25984/ ... ok
-[ * ] Check node at http://127.0.0.1:35984/ ... ok
-[ * ] Running cluster setup ... ok
-[ * ] Developers cluster is set up at http://127.0.0.1:15984.
-Admin username: root
-Password: 37l7YDQJ
-Time to hack! ...
-```
-**Note:** By default the cluster will be exposed on port `5984`, because it uses haproxy (passes `--with-haproxy` to `dev/run`) internally.
-
-You can pass arguments to the binary:
-
-```bash
-docker run -it <image-hash> --admin=foo:bar
-```
-
-**Note:** This will overwrite the default `--with-haproxy` flag. The cluster **won't** be exposed on
-port `5984` anymore. The individual nodes listen on `15984`, `25984`, ...`x5984`. If you wish to expose
-the cluster on `5984`, pass `--with-haproxy` explicitly.
-
-More examples:
-```bash
-# display the available options of the couchdb startup script
-docker run --rm <image-hash> --help
-
-# Enable admin party and expose the cluster on port 5984
-docker run -it -p 5984:5984 <image-hash> --with-admin-party-please --with-haproxy
-
-# Start two nodes (without proxy) exposed on port 15984 and 25984
-docker run -it -p 15984:15984 -p 25984:25984 <image-hash> -n 2
+[sudo] docker run -d -p 5984:5984 --name couchdb matthiasg/rpi-couchdb:1.7.1-couchperuser
 ```
 
 ## Build your own
@@ -202,6 +128,13 @@ and then build and run
 ```
 
 For the `2` image, configuration is stored at `/opt/couchdb/etc/`.
+
+## Add Upstream, fetching changes
+
+```sh
+git remote add upstream https://github.com/apache/couchdb-docker.git
+git fetch origin -v; git fetch upstream -v; git merge upstream/master
+```
 
 ## Feedback, Issues, Contributing
 

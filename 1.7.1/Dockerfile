@@ -13,7 +13,7 @@
 FROM resin/rpi-raspbian:jessie
 
 MAINTAINER Matthias Geisler matthias@openwebcraft.com
-# Upstream MAINTAINER Clemens Stolle klaemo@apache.org
+# Upstream MAINTAINER CouchDB Developers dev@couchdb.apache.org
 
 # Install instructions from https://cwiki.apache.org/confluence/display/COUCHDB/Debian
 
