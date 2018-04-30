@@ -11,6 +11,7 @@
 # the License.
 
 FROM matthiasg/rpi-couchdb:1.6.1
+FROM couchdb:1.7.1
 
 MAINTAINER Matthias Geisler matthias@openwebcraft.com
 # Upstream MAINTAINER Clemens Stolle klaemo@apache.org

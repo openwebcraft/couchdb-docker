@@ -13,15 +13,25 @@
 
 set -e
 
+# first arg is `-something` or `+something`
+if [ "${1#-}" != "$1" ] || [ "${1#+}" != "$1" ]; then
+	set -- /opt/couchdb/bin/couchdb "$@"
+fi
+
+# first arg is the bare word `couchdb`
+if [ "$1" = 'couchdb' ]; then
+	shift
+	set -- /opt/couchdb/bin/couchdb "$@"
+fi
+
 if [ "$1" = '/opt/couchdb/bin/couchdb' ]; then
 	# we need to set the permissions here because docker mounts volumes as root
-	chown -R couchdb:couchdb /opt/couchdb
+	chown -fR couchdb:couchdb /opt/couchdb || true
 
-	chmod -R 0770 /opt/couchdb/data
+	chmod -fR 0770 /opt/couchdb/data || true
 
-	chmod 664 /opt/couchdb/etc/*.ini
-	chmod 664 /opt/couchdb/etc/local.d/*.ini
-	chmod 775 /opt/couchdb/etc/*.d
+        find /opt/couchdb/etc -name \*.ini -exec chmod -f 664 {} \;
+	chmod -f 775 /opt/couchdb/etc/*.d || true
 
 	if [ ! -z "$NODENAME" ] && ! grep "couchdb@" /opt/couchdb/etc/vm.args; then
 		echo "-name couchdb@$NODENAME" >> /opt/couchdb/etc/vm.args
@@ -30,7 +40,13 @@ if [ "$1" = '/opt/couchdb/bin/couchdb' ]; then
 	if [ "$COUCHDB_USER" ] && [ "$COUCHDB_PASSWORD" ]; then
 		# Create admin
 		printf "[admins]\n%s = %s\n" "$COUCHDB_USER" "$COUCHDB_PASSWORD" > /opt/couchdb/etc/local.d/docker.ini
-		chown couchdb:couchdb /opt/couchdb/etc/local.d/docker.ini
+		chown -f couchdb:couchdb /opt/couchdb/etc/local.d/docker.ini || true
+	fi
+
+	if [ "$COUCHDB_SECRET" ]; then
+		# Set secret
+		printf "[couch_httpd_auth]\nsecret = %s\n" "$COUCHDB_SECRET" >> /opt/couchdb/etc/local.d/docker.ini
+		chown -f couchdb:couchdb /opt/couchdb/etc/local.d/docker.ini || true
 	fi
 
 	# if we don't find an [admins] section followed by a non-comment, display a warning

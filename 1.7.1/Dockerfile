@@ -17,7 +17,7 @@ MAINTAINER Matthias Geisler matthias@openwebcraft.com
 
 # Install instructions from https://cwiki.apache.org/confluence/display/COUCHDB/Debian
 
-RUN groupadd -r couchdb && useradd -d /var/lib/couchdb -g couchdb couchdb
+RUN groupadd -g 5984 -r couchdb && useradd -u 5984 -d /opt/couchdb -g couchdb couchdb
 
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -29,19 +29,37 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     libnspr4-0d \
   && rm -rf /var/lib/apt/lists/*
 
-# grab gosu for easy step-down from root and tini for signal handling
-RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-  && curl -o /usr/local/bin/gosu -fSL "https://github.com/tianon/gosu/releases/download/1.7/gosu-$(dpkg --print-architecture)" \
-  && curl -o /usr/local/bin/gosu.asc -fSL "https://github.com/tianon/gosu/releases/download/1.7/gosu-$(dpkg --print-architecture).asc" \
-  && gpg --verify /usr/local/bin/gosu.asc \
-  && rm /usr/local/bin/gosu.asc \
-  && chmod +x /usr/local/bin/gosu \
-  && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys 6380DC428747F6C393FEACA59A84159D7001A4E5 \
-  && curl -o /usr/local/bin/tini -fSL "https://github.com/krallin/tini/releases/download/v0.14.0/tini-armhf" \
-  && curl -o /usr/local/bin/tini.asc -fSL "https://github.com/krallin/tini/releases/download/v0.14.0/tini-armhf.asc" \
-  && gpg --verify /usr/local/bin/tini.asc \
-  && rm /usr/local/bin/tini.asc \
-  && chmod +x /usr/local/bin/tini
+ENV GOSU_VERSION 1.10
+ENV TINI_VERSION 0.16.1
+RUN set -ex; \
+    \
+    apt-get update; \
+    apt-get install -y --no-install-recommends wget; \
+    rm -rf /var/lib/apt/lists/*; \
+    \
+    dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
+    \
+# install gosu
+    wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-$dpkgArch"; \
+    wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
+    export GNUPGHOME="$(mktemp -d)"; \
+    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
+    gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
+    rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc; \
+    chmod +x /usr/local/bin/gosu; \
+    gosu nobody true; \
+    \
+# install tini
+    wget -O /usr/local/bin/tini "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-$dpkgArch"; \
+    wget -O /usr/local/bin/tini.asc "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-$dpkgArch.asc"; \
+    export GNUPGHOME="$(mktemp -d)"; \
+    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys 595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7; \
+    gpg --batch --verify /usr/local/bin/tini.asc /usr/local/bin/tini; \
+    rm -r "$GNUPGHOME" /usr/local/bin/tini.asc; \
+    chmod +x /usr/local/bin/tini; \
+    tini --version; \
+    \
+    apt-get purge -y --auto-remove wget
 
 # https://www.apache.org/dist/couchdb/KEYS
 ENV GPG_KEYS \
@@ -59,7 +77,7 @@ RUN set -xe \
     gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
   done
 
-ENV COUCHDB_VERSION 1.6.1
+ENV COUCHDB_VERSION 1.7.1
 
 # download dependencies, compile and install couchdb,
 # set correct permissions, expose couchdb to the outside and disable logging to disk
@@ -74,9 +92,9 @@ RUN buildDeps=' \
     make \
   ' \
   && apt-get update && apt-get install -y --no-install-recommends $buildDeps \
-  && curl -fSL http://apache.osuosl.org/couchdb/source/$COUCHDB_VERSION/apache-couchdb-$COUCHDB_VERSION.tar.gz -o couchdb.tar.gz \
+  && curl -fSL https://apache.osuosl.org/couchdb/source/$COUCHDB_VERSION/apache-couchdb-$COUCHDB_VERSION.tar.gz -o couchdb.tar.gz \
   && curl -fSL https://www.apache.org/dist/couchdb/source/$COUCHDB_VERSION/apache-couchdb-$COUCHDB_VERSION.tar.gz.asc -o couchdb.tar.gz.asc \
-  && gpg --verify couchdb.tar.gz.asc \
+  && gpg --batch --verify couchdb.tar.gz.asc couchdb.tar.gz \
   && mkdir -p /usr/src/couchdb \
   && tar -xzf couchdb.tar.gz -C /usr/src/couchdb --strip-components=1 \
   && cd /usr/src/couchdb \
@@ -95,7 +113,6 @@ RUN buildDeps=' \
   && sed -e 's!/usr/local/var/log/couchdb/couch.log$!/dev/null!' -i /usr/local/etc/couchdb/default.ini
 
 COPY ./docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh
 
 # Define mountable directories.
 VOLUME ["/usr/local/var/lib/couchdb"]
