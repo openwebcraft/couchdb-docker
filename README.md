@@ -11,13 +11,13 @@ Build and tested on *Raspberry Pi 3 Model B* (`ARMv8`).
 ---
 
 - Version (stable): `CouchDB 1.7.1`, `Erlang 17.3`
-- Version (stable): `CouchDB 2.1.1`, `Erlang 17.3`
+- Version (stable): `CouchDB 2.1.2`, `Erlang 17.3`
 
 ## Available tags
 
 - `1.7.1`: CouchDB 1.7.1
 - `1.7.1-couchperuser`: CouchDB 1.7.1 with couchperuser plugin
-- `latest`, `2.1.1`: CouchDB 2.1.1 single node (capable of running in a cluster)
+- `latest`, `2.1.2`: CouchDB 2.1.2 single node (capable of running in a cluster)
 
 ## Features
 
@@ -26,7 +26,7 @@ Build and tested on *Raspberry Pi 3 Model B* (`ARMv8`).
 * runs everything as user `couchdb` (security ftw!)
 * docker volume for data
 
-## Run (latest/2.1.1)
+## Run (latest/2.1.2)
 
 Available on the docker registry as [matthiasg/rpi-couchdb:latest](https://hub.docker.com/r/matthiasg/rpi-couchdb/).
 This is a build of the CouchDB 2.0 release. A data volume
@@ -40,7 +40,7 @@ Here is an example launch line for a single-node CouchDB with an admin username 
 
 ```bash
 # expose it to the world on port 5984 and use your current directory as the CouchDB Database directory
-$ docker run -p 5984:5984 --volume $(pwd):/opt/couchdb/data --volume ~/etc/local.d:/opt/couchdb/etc/local.d --env COUCHDB_USER=admin --env COUCHDB_PASSWORD=password matthiasg/rpi-couchdb:2.1.1
+$ docker run -p 5984:5984 --volume $(pwd):/opt/couchdb/data --volume ~/etc/local.d:/opt/couchdb/etc/local.d --env COUCHDB_USER=admin --env COUCHDB_PASSWORD=password matthiasg/rpi-couchdb:2.1.2
 ```
 
 ### Detailed configuration (latest/2.x)

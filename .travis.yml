@@ -6,7 +6,7 @@ services:
 env:
   - RELEASE=1.7.1
   - RELEASE=1.7.1-couchperuser
-  - RELEASE=2.1.1
+  - RELEASE=2.1.2
   - RELEASE=dev
   - RELEASE=dev-cluster
 
